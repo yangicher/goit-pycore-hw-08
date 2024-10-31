@@ -1,5 +1,6 @@
 from address_book import AddressBook
 from models import Record
+import pickle
 
 HELP = """
     Commands:
@@ -114,8 +115,8 @@ def birthdays(book : AddressBook):
     else:
         return "No upcoming birthdays."
 
-def main():
-    book = AddressBook()
+def main(loaded_book : AddressBook):
+    book = loaded_book
     print("Welcome to the assistant bot!")
     while True:
 
@@ -144,5 +145,18 @@ def main():
             case "help":
                 print(help())
 
+def save_data(book, filename="addressbook.pkl"):
+    with open(filename, "wb") as f:
+        pickle.dump(book, f)
+
+def load_data(filename="addressbook.pkl"):
+    try:
+        with open(filename, "rb") as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        return AddressBook()
+
 if __name__ == "__main__":
-    main()
+    book = load_data()
+    main(book)
+    save_data(book)
